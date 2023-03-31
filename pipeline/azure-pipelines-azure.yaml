@@ -1,0 +1,34 @@
+# File: azure-pipelines-azure.yaml
+trigger:
+- main
+
+extends:
+  template: templates/deployment-template.yaml
+  parameters:
+    cloud:  
+      - job: azure
+        displayName: Azure
+    action:  
+      - deploy: 
+        displayName: Deploy   
+
+
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - configuration
+    exclude:
+    - README.md
+    - configuration/backend
+
+variables: 
+- group: linea-directa-backend
+- name: route
+  value: $(System.DefaultWorkingDirectory)/configuration
+- name: tfvars-file
+  value: bucket.tfvars
+

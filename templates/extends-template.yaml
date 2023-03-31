@@ -1,0 +1,11 @@
+# File: Extends Stage.yml
+
+parameters:
+
+- name: deployStages
+  type: stageList
+  default: [] 
+
+stages:
+
+- ${{ parameters.deployStages }}

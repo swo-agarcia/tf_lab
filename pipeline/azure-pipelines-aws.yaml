@@ -1,0 +1,43 @@
+# Deployment Pipeline
+
+resources:
+  - repo: self
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - configuration
+    exclude:
+    - README.md
+    - configuration/backend
+
+variables: 
+- group: linea-directa-backend-aws
+- name: route
+  value: $(System.DefaultWorkingDirectory)/configuration/aws
+- name: tfvars-file
+  value: bucket.tfvars
+
+extends:
+  template: /templates/extends-template.yaml
+  parameters:
+    deployStages:
+    - stage: aws_dev
+      displayName: AWS Deploy Dev
+      jobs: 
+      # job template
+      - template: /templates/job-template.yaml
+        parameters:
+          environment: ld-extends-test-gate-dev
+          action: check
+          cloud: aws
+
+    # - stage: aws_prod
+    #   displayName: AWS Deploy Prod
+    #   jobs:
+    #   - template: templates/job-template.yaml
+    #     parameters:
+    #       environment: ld-secret-scanning-test-gate-prod
