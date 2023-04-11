@@ -15,7 +15,7 @@ trigger:
     - configuration/backend
 
 variables: 
-- group: linea-directa-backend-aws
+- group: laboratorio-backend-aws
 - name: route
   value: $(System.DefaultWorkingDirectory)/configuration/aws
 - name: tfvars-file
@@ -31,7 +31,7 @@ extends:
       # job template
       - template: /templates/job-template.yaml
         parameters:
-          environment: ld-extends-test-gate-dev
+          environment: lab-extends-test-gate-dev
           action: check
           cloud: aws
 
