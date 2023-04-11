@@ -17,7 +17,7 @@ trigger:
 variables: 
 - group: laboratorio-backend-aws
 - name: route
-  value: $(System.DefaultWorkingDirectory)/configuration/aws
+  value: $(System.DefaultWorkingDirectory)/configuration/
 - name: tfvars-file
   value: bucket.tfvars
 
