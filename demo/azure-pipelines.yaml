@@ -19,9 +19,16 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
     
-- task: TerraformTaskV4@4
+# - task: TerraformTaskV4@4
+#   inputs:
+#     provider: 'aws'
+#     command: 'init'
+#     workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration/'
+#     allowTelemetryCollection: false
+
+- task: Terraform@2
   inputs:
-    provider: 'aws'
-    command: 'init'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration/'
-    allowTelemetryCollection: false
+    TemplatePath: '$(System.DefaultWorkingDirectory)/demo/configuration/'
+    Arguments: 'init'
+    InstallTerraform: false
+    UseAzureSub: false
