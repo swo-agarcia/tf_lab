@@ -11,18 +11,20 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo Hello, world!
+- script: echo Hello, Terraform!
   displayName: 'Run a one-line script'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
-
 - task: AWSShellScript@1
+  displayName: 'Terraform Init'
   inputs:
     regionName: 'us-east-1'
     scriptType: 'inline'
-    inlineScript: 'terraform init'
     disableAutoCwd: true
     workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration/'
+    inlineScript: |
+      terraform init
+      
+- script: |
+      pwd
+      ls -lrth
+  displayName: 'Show Terraform files'
