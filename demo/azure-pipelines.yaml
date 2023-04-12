@@ -25,6 +25,12 @@ steps:
 #     command: 'init'
 #     workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration/'
 #     allowTelemetryCollection: false
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'aws'
+    command: 'custom'
+    customCommand: 'init'
+    outputTo: 'console'
 
 - task: Terraform@2
   inputs:
