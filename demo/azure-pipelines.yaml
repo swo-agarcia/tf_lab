@@ -18,9 +18,10 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
-
-- task: TerraformCLI@0
+    
+- task: TerraformTaskV4@4
   inputs:
+    provider: 'aws'
     command: 'init'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration/'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration/''
     allowTelemetryCollection: false
