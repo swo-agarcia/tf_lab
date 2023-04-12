@@ -19,10 +19,10 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
-- task: TerraformTaskV4@4
+- task: AWSShellScript@1
   inputs:
-    provider: 'aws'
-    command: 'init'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration'
-    backendServiceAWS: 'sc-demo-aws-tf'
-    allowTelemetryCollection: false
+    regionName: 'us-east-1'
+    scriptType: 'inline'
+    inlineScript: 'terraform init'
+    disableAutoCwd: true
+    workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration/'
