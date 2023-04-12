@@ -22,5 +22,5 @@ steps:
 - task: TerraformCLI@0
   inputs:
     command: 'init'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/configuration/'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration/'
     allowTelemetryCollection: false
