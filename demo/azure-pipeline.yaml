@@ -1,0 +1,250 @@
+trigger: none
+
+pool:
+  default:
+    vmImage: 'ubuntu-22.04'
+    
+parameters:
+- name: environment
+  type: string
+  default: ''
+
+- name: pool
+  type: object
+  default:
+    vmImage: 'ubuntu-22.04'
+
+- name: action
+  type: string
+  default: ''
+
+- name: cloud
+  type: string
+  default: ''
+jobs:
+  ### AWS ###
+- ${{ if eq(parameters.cloud, 'aws') }}:
+  - deployment: aws
+    displayName: ${{ parameters.action }}-aws
+    pool: ${{ parameters.pool }}
+    environment: ${{ parameters.environment }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - checkout: self
+          
+          - task: Bash@3
+            displayName: 'Deployment Start'
+            inputs:
+              targetType: 'inline'
+              script: |
+                  datetime=$(date +%d/%m/%Y)
+                  echo "##vso[task.setvariable variable=creation-date;]$datetime"
+
+          - task: replacetokens@5
+            displayName: Replace variables
+            inputs:
+              rootDirectory: '$(route)'
+              targetFiles: '$(tfvars-file)'
+              encoding: 'auto'
+              tokenPattern: 'default'
+              writeBOM: false
+              actionOnMissing: 'warn'
+              keepToken: false
+              actionOnNoFiles: 'continue'
+              enableTransforms: false
+              enableRecursion: false
+              useLegacyPattern: false
+              enableTelemetry: false
+              
+          - task: Bash@3
+            displayName: Show variables
+            inputs:
+              targetType: 'inline'
+              workingDirectory: '$(route)'
+              script: 'cat $(tfvars-file)'
+
+          - task: TerraformTaskV3@3
+            displayName: Terraform Init
+            inputs:
+              provider: 'aws'
+              command: 'init'
+              workingDirectory: $(route)
+              backendServiceAWS: '$(account)'
+              backendAWSBucketName: 's3-dev-aws-ld-arquitectura-desarrollo-backend'
+              backendAWSKey: 'ld-arquitectura-desarrollo.tfstate'
+          
+          - ${{ if eq(parameters.action, 'deploy') }}:
+
+            - task: TerraformTaskV3@3
+              displayName: Terraform Plan
+              inputs:
+                  provider: 'aws'
+                  command: 'plan'
+                  commandOptions: '-var-file $(tfvars-file)'
+                  workingDirectory: $(route)
+                  environmentServiceNameAWS: '$(account)'
+                  
+            - task: TerraformTaskV3@3
+              displayName: Terraform Apply
+              inputs:
+                  provider: 'aws'
+                  command: 'apply'
+                  workingDirectory: '$(route)'
+                  commandOptions: '-auto-approve -var-file $(tfvars-file)'
+                  environmentServiceNameAWS: '$(account)'
+
+          - ${{ if eq(parameters.action, 'destroy') }}:
+
+            - task: TerraformTaskV3@3
+              displayName: Terraform Destroy
+              inputs:
+                  provider: 'aws'
+                  command: 'destroy'
+                  workingDirectory: '$(route)'
+                  commandOptions: '-auto-approve -var-file $(tfvars-file)'
+                  environmentServiceNameAWS: '$(account)'
+
+          - ${{ if eq(parameters.action, 'check') }}:
+
+            - task: TerraformTaskV3@3
+              displayName: Terraform Refresh
+              inputs:
+                  provider: 'aws'
+                  command: 'custom'
+                  customCommand: 'refresh'
+                  commandOptions: '-var-file $(tfvars-file)'
+                  outputTo: 'console'
+                  workingDirectory: '$(route)'
+                  environmentServiceNameAWS: 'ld-arq-dev-tf'
+
+            - task: TerraformTaskV3@3
+              displayName: Terraform Plan
+              inputs:
+                  provider: 'aws'
+                  command: 'plan'
+                  commandOptions: '-var-file $(tfvars-file)'
+                  workingDirectory: $(route)
+                  environmentServiceNameAWS: '$(account)'
+
+  ### AZURE ###
+- ${{ if eq(parameters.cloud, 'azure') }}:
+  - deployment: azure
+    displayName: ${{ parameters.action }}-azure
+    pool: ${{ parameters.pool }}
+    condition: eq('${{ parameters.cloud }}', 'azure')
+    environment: ${{ parameters.environment }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+            - checkout: self
+
+            - task: Bash@3
+              displayName: 'Deployment Start'
+              inputs:
+                  targetType: 'inline'
+                  script: |
+                      datetime=$(date +%d/%m/%Y)
+                      echo "##vso[task.setvariable variable=creation-date;]$datetime"
+
+            - task: replacetokens@5
+              displayName: Replace variables
+              inputs:
+                  rootDirectory: '$(route)'
+                  targetFiles: '$(tfvars-file)'
+                  encoding: 'auto'
+                  tokenPattern: 'default'
+                  writeBOM: false
+                  actionOnMissing: 'warn'
+                  keepToken: false
+                  actionOnNoFiles: 'continue'
+                  enableTransforms: false
+                  enableRecursion: false
+                  useLegacyPattern: false
+                  enableTelemetry: false
+                  
+            - task: Bash@3
+              displayName: Show variables
+              inputs:
+                  targetType: 'inline'
+                  workingDirectory: '$(route)'
+                  script: 'cat $(tfvars-file)'
+
+            - task: TerraformTaskV3@3
+              displayName: Terraform Init
+              inputs:
+                provider: 'azurerm'
+                command: 'custom'
+                customCommand: 'init'
+                workingDirectory: '$(route)'
+                outputTo: 'console'
+                environmentServiceNameAzureRM: '$(account)'
+            # - task: TerraformTaskV3@3
+            #   displayName: Terraform Init
+            #   inputs:
+            #       provider: 'azurerm'
+            #       command: 'init'
+            #       workingDirectory: '$(route)'
+            #       backendServiceArm: '$(account)'
+            #       backendAzureRmResourceGroupName: 'rg-dev-az-ld-azure-infraestructura-pocbackend'
+            #       backendAzureRmStorageAccountName: 'sadevazbackend'
+            #       backendAzureRmContainerName: 'sc-dev-az-ld-azure-infraestructura-poc-backend'
+            #       backendAzureRmKey: 'ld-arquitectura-desarrollo.tfstate'
+              
+            - ${{ if eq(parameters.action, 'deploy') }}:
+
+              - task: TerraformTaskV3@3
+                displayName: Terraform Plan
+                inputs:
+                  provider: 'azurerm'
+                  command: 'plan'
+                  workingDirectory: '$(route)'
+                  commandOptions: '-var-file $(tfvars-file)'
+                  environmentServiceNameAzureRM: '$(account)'
+
+              - task: TerraformTaskV3@3
+                displayName: Terraform Apply
+                inputs:
+                  provider: 'azurerm'
+                  command: 'apply'
+                  workingDirectory: '$(route)'
+                  commandOptions: '-auto-approve -var-file $(tfvars-file)'
+                  environmentServiceNameAzureRM: '$(account)'
+
+
+            - ${{ if eq(parameters.action, 'destroy') }}:
+              
+              - task: TerraformTaskV3@3
+                displayName: Terraform Destroy
+                inputs:
+                  provider: 'azurerm'
+                  command: 'destroy'
+                  workingDirectory: '$(route)'
+                  commandOptions: '-auto-approve -var-file $(tfvars-file)'
+                  environmentServiceNameAzureRM: '$(account)'
+
+            - ${{ if eq(parameters.action, 'check') }}:
+
+              - task: TerraformTaskV3@3
+                displayName: Terraform Refresh
+                inputs:
+                  provider: 'azurerm'
+                  command: 'custom'
+                  workingDirectory: '$(route)'
+                  customCommand: 'refresh'
+                  commandOptions: '-var-file $(tfvars-file)'
+                  outputTo: 'console'
+                  environmentServiceNameAzureRM: '$(account)'
+
+              - task: TerraformTaskV3@3
+                displayName: Terraform Plan
+                inputs:
+                  provider: 'azurerm'
+                  command: 'plan'
+                  workingDirectory: '$(route)'
+                  commandOptions: '-var-file $(tfvars-file)'
+                  environmentServiceNameAzureRM: '$(account)'
