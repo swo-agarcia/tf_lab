@@ -23,6 +23,6 @@ steps:
   inputs:
     provider: 'aws'
     command: 'init'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration/'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration'
     backendServiceAWS: 'sc-demo-aws-tf
     allowTelemetryCollection: false
