@@ -27,5 +27,5 @@ steps:
 - script: |
       pwd
       cd $(System.DefaultWorkingDirectory)/demo/configuration
-      ls -lrth
+      ls -lrtha
   displayName: 'Show Terraform files'
