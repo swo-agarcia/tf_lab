@@ -1,3 +1,3 @@
 region = "us-east-1"
-date = "#{creation-date}#"
-account = "#{account}#"
+date = "13/04/2023"
+account = "deletme1234"
