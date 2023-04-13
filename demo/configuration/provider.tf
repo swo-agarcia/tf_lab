@@ -9,5 +9,5 @@ terraform {
 
 provider "aws" {
   region = var.region
-  profile = "lineadirectadesarrollo"
+  profile = "labtf"
 }
