@@ -17,13 +17,25 @@ steps:
 - task: AWSShellScript@1
   displayName: 'Terraform Init'
   inputs:
+    awsCredentials: 'sc-demo-lab-aws-tf'
     regionName: 'us-east-1'
     scriptType: 'inline'
     disableAutoCwd: true
     workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration/'
     inlineScript: |
       terraform init
-      
+      aws sts get-caller-identity
+
+- task: AWSShellScript@1
+  inputs:
+    awsCredentials: 'sc-demo-lab-aws-tf'
+    regionName: 'us-east-1'
+    scriptType: 'inline'
+    inlineScript: 'terraform plan -var-file="backend.tfvars"'
+    disableAutoCwd: true
+    workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration/'
+
+
 - script: |
       pwd
       cd $(System.DefaultWorkingDirectory)/demo/configuration
