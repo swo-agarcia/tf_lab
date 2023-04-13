@@ -27,6 +27,7 @@ steps:
       aws sts get-caller-identity
 
 - task: AWSShellScript@1
+  displayName: 'Terraform Plan'
   inputs:
     awsCredentials: 'sc-demo-lab-aws-tf'
     regionName: 'us-east-1'
