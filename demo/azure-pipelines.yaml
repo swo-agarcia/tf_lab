@@ -36,6 +36,15 @@ steps:
     disableAutoCwd: true
     workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration/'
 
+- task: AWSShellScript@1
+  displayName: 'Terraform Apply'
+  inputs:
+    awsCredentials: 'sc-demo-lab-aws-tf'
+    regionName: 'us-east-1'
+    scriptType: 'inline'
+    inlineScript: 'terraform apply -var-file="backend.tfvars" -auto-approve'
+    disableAutoCwd: true
+    workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration/'
 
 - script: |
       pwd
