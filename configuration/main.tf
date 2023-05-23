@@ -1,61 +1,28 @@
-# Configuracion que contiene los recursos para definir el Backend
+# Grupo se seguridad para laboratorio
 
-# Bucket que contiene los TF State
-resource "aws_s3_bucket" "bucket-state" {
-    bucket = "s3-dev-aws-${var.account}-backend"
-    object_lock_enabled = true
+resource "aws_security_group" "allow_tls" {
+  name        = "allow_tls"
+  description = "Allow TLS inbound traffic"
+  vpc_id      = aws_vpc.main.id
 
-    tags = {
-        Description  = "Bucket que almacena el backend de Terraform en la cuenta"
-        Environment  = "Desarrollo"
-        CreationDate = var.date
-
-    }
-}
-
-resource "aws_s3_bucket_versioning" "bucket_versioning" {
-  bucket = aws_s3_bucket.bucket-state.id
-  versioning_configuration {
-    status = "Enabled"
+  ingress {
+    description      = "TLS from VPC"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = [aws_vpc.main.cidr_block]
+    ipv6_cidr_blocks = [aws_vpc.main.ipv6_cidr_block]
   }
-}
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_encryption" {
-  bucket = aws_s3_bucket.bucket-state.id
-    rule {
-        apply_server_side_encryption_by_default {
-            sse_algorithm = "AES256"
-        }
-    }
-}
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
 
-resource "aws_s3_bucket_public_access_block" "public_access_block" {
-  bucket = aws_s3_bucket.bucket-state.id
-
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
-# Tabla Dynamo para guardar los LOCK FILE
-
-resource "aws_dynamodb_table" "terraform-lock" {
-    name           = "dynamodb-dev-aws-${var.account}-backend"
-    read_capacity  = 5
-    write_capacity = 5
-    hash_key       = "LockID"
-    attribute {
-        name = "LockID"
-        type = "S"
-    }
-    server_side_encryption {
-        enabled = true
-    }
-
-    tags = {
-    Description  = "Tabla que almacena el backend de Terraform en la cuenta"
-    Environment  = "Desarrollo"
-    CreationDate = var.date
-    }
+  tags = {
+    Name = "allow_tls"
+  }
 }
