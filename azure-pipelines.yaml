@@ -1,0 +1,112 @@
+# Starter pipeline
+
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - configuration
+    - azure-pipelines.yaml
+    exclude:
+    - demo
+
+pool:
+  vmImage: ubuntu-latest
+  
+parameters:
+- name: action
+  displayName: Accion a ejecutar
+  type: string
+  default: deploy
+  values:
+  - check
+  - deploy
+  - destroy
+  - init
+  
+variables:
+- name: route
+  value: $(System.DefaultWorkingDirectory)/configuration
+
+
+steps:
+
+- task: AWSShellScript@1
+  displayName: 'Terraform Init'
+  inputs:
+    awsCredentials: 'sc-demo-lab-aws-tf'
+    regionName: 'us-east-1'
+    scriptType: 'inline'
+    disableAutoCwd: true
+    workingDirectory: '$(route)'
+    inlineScript: |
+      terraform init
+      aws sts get-caller-identity
+      
+- ${{ if eq(parameters.action, 'deploy') }}:
+
+  - task: AWSShellScript@1
+    displayName: 'Terraform Plan'
+    inputs:
+      awsCredentials: 'sc-demo-lab-aws-tf'
+      regionName: 'us-east-1'
+      scriptType: 'inline'
+      inlineScript: 'terraform plan'
+      disableAutoCwd: true
+      workingDirectory: '$(route)'
+
+  - task: AWSShellScript@1
+    displayName: 'Terraform Apply'
+    inputs:
+      awsCredentials: 'sc-demo-lab-aws-tf'
+      regionName: 'us-east-1'
+      scriptType: 'inline'
+      inlineScript: 'terraform apply -auto-approve'
+      disableAutoCwd: true
+      workingDirectory: '$(route)'
+
+- ${{ if eq(parameters.action, 'check') }}:
+
+  - task: AWSShellScript@1
+    displayName: 'Terraform Refresh'
+    inputs:
+      awsCredentials: 'sc-demo-lab-aws-tf'
+      regionName: 'us-east-1'
+      scriptType: 'inline'
+      inlineScript: 'terraform refresh " -auto-approve'
+      disableAutoCwd: true
+      workingDirectory: '$(route)'
+
+  - task: AWSShellScript@1
+    displayName: 'Terraform Plan'
+    inputs:
+      awsCredentials: 'sc-demo-lab-aws-tf'
+      regionName: 'us-east-1'
+      scriptType: 'inline'
+      inlineScript: 'terraform plan'
+      disableAutoCwd: true
+      workingDirectory: '$(route)'
+
+- ${{ if eq(parameters.action, 'destroy') }}:
+
+  - task: AWSShellScript@1
+    displayName: 'Terraform Refresh'
+    inputs:
+      awsCredentials: 'sc-demo-lab-aws-tf'
+      regionName: 'us-east-1'
+      scriptType: 'inline'
+      inlineScript: 'terraform destroy -auto-approve'
+      disableAutoCwd: true
+      workingDirectory: '$(route)'
+
+
+- script: |
+      pwd
+      cd $(System.DefaultWorkingDirectory)/demo/configuration
+      ls -lrtha
+  displayName: 'Show Terraform files'
