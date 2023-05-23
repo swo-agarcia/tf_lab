@@ -5,9 +5,7 @@ terraform {
       version = "~> 4.0"
     }
   }
-}
-
-#Backend
+  
   backend "s3" {
     bucket         = "s3-dev-aws-deletme1234-backend"
     key            = "demo-lab-devsecops.tfstate"
