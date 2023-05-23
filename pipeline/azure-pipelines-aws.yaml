@@ -8,11 +8,9 @@ trigger:
     include:
     - main
   paths:
-    include:
-    - configuration
     exclude:
+    - configuration
     - README.md
-    - configuration/backend
 
 variables: 
 - group: laboratorio-backend-aws
