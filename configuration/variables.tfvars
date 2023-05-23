@@ -1,5 +1,3 @@
 region = "#{region}#"
-date = "#{creation-date}#"
-account = "#{account}#"
 vpc_id = "#{vpc-id}#"
 cidr_block "#{cidr-block}#"
