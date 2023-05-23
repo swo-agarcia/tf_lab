@@ -14,7 +14,7 @@ parameters:
 - name: action
   displayName: Accion a ejecutar
   type: string
-  default: check
+  default: deploy
   values:
   - check
   - deploy
@@ -56,7 +56,6 @@ steps:
 
   - task: AWSShellScript@1
     displayName: 'Terraform Apply'
-    condition: false
     inputs:
       awsCredentials: 'sc-demo-lab-aws-tf'
       regionName: 'us-east-1'
@@ -69,7 +68,6 @@ steps:
 
   - task: AWSShellScript@1
     displayName: 'Terraform Refresh'
-    condition: false
     inputs:
       awsCredentials: 'sc-demo-lab-aws-tf'
       regionName: 'us-east-1'
