@@ -8,12 +8,12 @@ terraform {
 }
 
 #Backend
-backend "s3" {
-  bucket         = "s3-dev-aws-deletme1234-backend"
-  key            = "demo-lab-devsecops.tfstate"
-  region         = "us-east-1"
-  dynamodb_table = "dynamodb-dev-aws-deletme1234-backend"
-  # skip_credentials_validation = true
+  backend "s3" {
+    bucket         = "s3-dev-aws-deletme1234-backend"
+    key            = "demo-lab-devsecops.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "dynamodb-dev-aws-deletme1234-backend"
+    # skip_credentials_validation = true
   }
 }
 
