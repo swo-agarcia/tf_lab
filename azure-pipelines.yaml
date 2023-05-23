@@ -30,12 +30,35 @@ parameters:
   - init
   
 variables:
+- group: variables-demo-lab-aws-tf
 - name: route
   value: $(System.DefaultWorkingDirectory)/configuration
 
-
 steps:
 
+# - task: replacetokens@5
+#   displayName: Replace variables
+#   inputs:
+#     rootDirectory: '$(route)'
+#     targetFiles: '$(tfvars-file)'
+#     encoding: 'auto'
+#     tokenPattern: 'default'
+#     writeBOM: false
+#     actionOnMissing: 'warn'
+#     keepToken: false
+#     actionOnNoFiles: 'continue'
+#     enableTransforms: false
+#     enableRecursion: false
+#     useLegacyPattern: false
+#     enableTelemetry: false
+    
+# - task: Bash@3
+#   displayName: Show variables
+#   inputs:
+#     targetType: 'inline'
+#     workingDirectory: '$(route)'
+#     script: 'cat $(tfvars-file)'
+    
 - task: AWSShellScript@1
   displayName: 'Terraform Init'
   inputs:
