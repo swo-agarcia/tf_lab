@@ -37,12 +37,13 @@ steps:
     workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration/'
 
 - task: AWSShellScript@1
-  displayName: 'Terraform Destroy'
+  displayName: 'Terraform Apply'
+  condition: false
   inputs:
     awsCredentials: 'sc-demo-lab-aws-tf'
     regionName: 'us-east-1'
     scriptType: 'inline'
-    inlineScript: 'terraform destroy -var-file="backend.tfvars" -auto-approve'
+    inlineScript: 'terraform apply -var-file="backend.tfvars" -auto-approve'
     disableAutoCwd: true
     workingDirectory: '$(System.DefaultWorkingDirectory)/demo/configuration/'
 
