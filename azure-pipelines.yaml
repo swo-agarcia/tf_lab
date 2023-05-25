@@ -34,7 +34,7 @@ variables:
 - name: route
   value: $(System.DefaultWorkingDirectory)/configuration
 - name: tfvars-file
-  value: $(System.DefaultWorkingDirectory)/configuration/variables.tf
+  value: $(System.DefaultWorkingDirectory)/configuration/terraform.tfvars
 
 steps:
 
