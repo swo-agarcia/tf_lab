@@ -17,4 +17,11 @@ terraform {
 
 provider "aws" {
   region = var.region
+  default_tags {
+    tags = {
+     Environment = "Test"
+     Owner       = "SWO"
+     Project     = "DevSecOps"
+    }
+  }
 }
