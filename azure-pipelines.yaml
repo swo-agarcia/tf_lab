@@ -38,7 +38,7 @@ variables:
   
 jobs:
 
-- template: $(System.DefaultWorkingDirectory)/templates/job-pipeline-template.yaml  # Template reference
+- template: templates/job-pipeline-template.yaml  # Template reference
   parameters:
     action: deploy
     pool:
