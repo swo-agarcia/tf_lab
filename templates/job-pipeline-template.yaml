@@ -1,0 +1,19 @@
+parameters:
+- name: environment
+  type: string
+  default: ''
+
+- name: pool
+  type: object
+  default:
+    vmImage: 'ubuntu-22.04'
+
+- name: action
+  type: string
+  default: ''
+
+- name: cloud
+  type: string
+  default: ''
+
+jobs:
