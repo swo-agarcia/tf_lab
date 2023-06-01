@@ -40,7 +40,7 @@ jobs:
 
 - template: templates/job-pipeline-template.yaml  # Template reference
   parameters:
-    action: deploy
+    action: destroy
     pool:
       vmImage: ubuntu-latest
 
