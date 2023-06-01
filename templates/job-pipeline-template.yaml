@@ -98,7 +98,7 @@ jobs:
   - ${{ if eq(parameters.action, 'destroy') }}:
 
     - task: AWSShellScript@1
-      displayName: 'Terraform Refresh'
+      displayName: 'Terraform Destroy'
       inputs:
         awsCredentials: 'sc-demo-lab-aws-tf'
         regionName: 'us-east-1'
