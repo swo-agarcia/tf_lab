@@ -81,7 +81,7 @@ jobs:
         awsCredentials: 'sc-demo-lab-aws-tf'
         regionName: 'us-east-1'
         scriptType: 'inline'
-        inlineScript: 'terraform refresh " -auto-approve'
+        inlineScript: 'terraform refresh -auto-approve'
         disableAutoCwd: true
         workingDirectory: '$(route)'
 
