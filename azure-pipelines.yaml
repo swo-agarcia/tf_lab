@@ -45,12 +45,8 @@ stages:
         action: deploy
         pool:
           vmImage: ubuntu-latest
-    - template: templates/job-pipeline-template.yaml  # Template reference
-      parameters:
-        action: deploy
-        pool:
-          vmImage: ubuntu-latest
 - stage: Check
+  condition: deploy
   displayName: Revision de configuracion
   jobs:
     - template: templates/job-pipeline-template.yaml  # Template reference
@@ -59,6 +55,7 @@ stages:
         pool:
           vmImage: ubuntu-latest
 - stage: Destroy
+  condition: deploy
   displayName: Eliminacion de Infra
   jobs:
     - template: templates/job-pipeline-template.yaml  # Template reference
