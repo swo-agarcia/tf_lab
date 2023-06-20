@@ -53,8 +53,8 @@ stages:
         action: check
         pool:
           vmImage: ubuntu-latest
-- stage: Check
-  displayName: Revision de configuracion
+- stage: Destroy
+  displayName: Eliminacion de Infra
   jobs:
     - template: templates/job-pipeline-template.yaml  # Template reference
       parameters:
