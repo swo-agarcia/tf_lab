@@ -10,7 +10,7 @@ parameters:
 
 
 jobs:
-- job: ${{ parameters.action }}_aws
+- job: 
   pool: ${{ parameters.pool }}
   steps:
   
