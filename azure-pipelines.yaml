@@ -35,14 +35,33 @@ variables:
   value: $(System.DefaultWorkingDirectory)/configuration
 - name: tfvars-file
   value: $(System.DefaultWorkingDirectory)/configuration/terraform.tfvars
-  
-jobs:
 
-- template: templates/job-pipeline-template.yaml  # Template reference
-  parameters:
-    action: destroy
-    pool:
-      vmImage: ubuntu-latest
+stages:
+- stage: deploy
+  displayName: Despliegue Infra
+  jobs:
+    - template: templates/job-pipeline-template.yaml  # Template reference
+      parameters:
+        action: deploy
+        pool:
+          vmImage: ubuntu-latest
+- stage: Check
+  displayName: Revision de configuracion
+  jobs:
+    - template: templates/job-pipeline-template.yaml  # Template reference
+      parameters:
+        action: check
+        pool:
+          vmImage: ubuntu-latest
+- stage: Check
+  displayName: Revision de configuracion
+  jobs:
+    - template: templates/job-pipeline-template.yaml  # Template reference
+      parameters:
+        action: destroy
+        pool:
+          vmImage: ubuntu-latest
+    
 
 
 # steps:
